@@ -37,12 +37,7 @@ export default function App() {
           onScroll={() => {
             props.scrollElement(props.element, event);
           }}
-          style={{
-            height: '200px',
-            width: '200px',
-            overflow: 'scroll',
-            border: '1px solid black',
-          }}
+         className="ovf"
         >
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
           porttitor vulputate consequat. Suspendisse elementum massa at lectus
