@@ -30,15 +30,11 @@ export default function MyApp() {
         onScroll={handleScroll}
         scrollPosition={scrollPositions['element2']}
       />
-      <Element
-        id="element3"
-        onScroll={handleScroll}
-        scrollPosition={scrollPositions['element3']}
-      />
     </div>
   );
 
   function Element({ id, onScroll, scrollPosition }) {
+
     const ref = useRef(null);
 
     useEffect(() => {
@@ -52,23 +48,16 @@ export default function MyApp() {
       }
     }, [scrollPosition]);
 
-    useEffect(() => {
-      const handleElementScroll = () => {
-        if (ref.current) {
-          onScroll(id, ref.current.scrollTop);
-        }
-      };
-      const element = ref.current;
-      element.addEventListener('scroll', handleElementScroll);
-      return () => {
-        element.removeEventListener('scroll', handleElementScroll);
-      };
-    }, [id, onScroll]);
+    const handleElementScroll = () => {
+      if (ref.current) {
+        onScroll(id, ref.current.scrollTop);
+      }
+    };
 
     return (
       <div>
         <div>{id + ' : ' + scrollPosition}</div>
-        <div ref={ref} className="ovf">
+        <div ref={ref} className="ovf" onScroll={handleElementScroll}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
           porttitor vulputate consequat. Suspendisse elementum massa at lectus
           venenatis, vel lacinia risus consectetur. Morbi eget vestibulum
