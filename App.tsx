@@ -1,44 +1,74 @@
 import * as React from 'react';
 import './style.css';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
-export default function App() {
-  const [scrolls, setScrolls] = useState([
-    { element: 'lorem', scrollTop: 0 },
-    { element: 'ipsum', scrollTop: 0 },
-  ]);
+export default function MyApp() {
+  const [scrollPositions, setScrollPositions] = useState({});
+  const isInitialMount = useRef(true);
 
-  function scrollElement(element, event) {
-    const newScrolls = scrolls.map((e) => {
-      return { ...e };
-    });
-    newScrolls.map((e) => {
-      if (e.element == element) {
-        e.scrollTop = Math.round(event.target.scrollTop);
+  const handleScroll = (id, scrollTop) => {
+    setScrollPositions((prevState) => {
+      if (prevState[id] !== scrollTop) {
+        return {
+          ...prevState,
+          [id]: scrollTop,
+        };
       }
+      return prevState;
     });
-    setScrolls(newScrolls);
-  }
+  };
 
-  function Element(props) {
-    console.log(props.scrollTop);
-    let elementRef = useRef();
+  return (
+    <div>
+      <Element
+        id="element1"
+        onScroll={handleScroll}
+        scrollPosition={scrollPositions['element1']}
+      />
+      <Element
+        id="element2"
+        onScroll={handleScroll}
+        scrollPosition={scrollPositions['element2']}
+      />
+      <Element
+        id="element3"
+        onScroll={handleScroll}
+        scrollPosition={scrollPositions['element3']}
+      />
+    </div>
+  );
+
+  function Element({ id, onScroll, scrollPosition }) {
+    const ref = useRef(null);
 
     useEffect(() => {
-      if (elementRef) elementRef.current.scrollTop = props.scrollTop;
-    }, [elementRef, props.scrollTop]);
+      if (isInitialMount.current) {
+        isInitialMount.current = false;
+        return;
+      }
+
+      if (ref.current && scrollPosition !== ref.current.scrollTop) {
+        ref.current.scrollTop = scrollPosition;
+      }
+    }, [scrollPosition]);
+
+    useEffect(() => {
+      const handleElementScroll = () => {
+        if (ref.current) {
+          onScroll(id, ref.current.scrollTop);
+        }
+      };
+      const element = ref.current;
+      element.addEventListener('scroll', handleElementScroll);
+      return () => {
+        element.removeEventListener('scroll', handleElementScroll);
+      };
+    }, [id, onScroll]);
 
     return (
       <div>
-        <div>{props.element + ':' + props.scrollTop}</div>
-        <div
-          ref={elementRef}
-          id={props.element}
-          onScroll={() => {
-            props.scrollElement(props.element, event);
-          }}
-         className="ovf"
-        >
+        <div>{id + ' : ' + scrollPosition}</div>
+        <div ref={ref} className="ovf">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur
           porttitor vulputate consequat. Suspendisse elementum massa at lectus
           venenatis, vel lacinia risus consectetur. Morbi eget vestibulum
@@ -49,17 +79,4 @@ export default function App() {
       </div>
     );
   }
-
-  return (
-    <div>
-      {scrolls.map((e) => (
-        <Element
-          key={e.element}
-          element={e.element}
-          scrollTop={e.scrollTop}
-          scrollElement={scrollElement}
-        />
-      ))}
-    </div>
-  );
 }
