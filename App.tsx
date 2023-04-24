@@ -4,10 +4,9 @@ import { useState, useRef, useEffect } from 'react';
 
 export default function MyApp() {
   const [scrollPositions, setScrollPositions] = useState({});
-  const element = ['lorem','ipsum']
-  console.log(scrollPositions)
-  const handleScroll = (id, scrollTop) => {
 
+
+  const handleScroll = (id, scrollTop) => {
     setScrollPositions((prevState) => {
       if (prevState[id] !== scrollTop) {
         return {
