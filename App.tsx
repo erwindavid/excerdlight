@@ -4,9 +4,9 @@ import { useState, useRef, useEffect } from 'react';
 
 export default function MyApp() {
   const [scrollPositions, setScrollPositions] = useState({});
-  const isInitialMount = useRef(true);
 
   const handleScroll = (id, scrollTop) => {
+    console.log(scrollTop)
     setScrollPositions((prevState) => {
       if (prevState[id] !== scrollTop) {
         return {
@@ -34,16 +34,10 @@ export default function MyApp() {
   );
 
   function Element({ id, onScroll, scrollPosition }) {
-
     const ref = useRef(null);
 
     useEffect(() => {
-      if (isInitialMount.current) {
-        isInitialMount.current = false;
-        return;
-      }
-
-      if (ref.current && scrollPosition !== ref.current.scrollTop) {
+      if (ref.current /*&& scrollPosition !== ref.current.scrollTop*/) {
         ref.current.scrollTop = scrollPosition;
       }
     }, [scrollPosition]);
